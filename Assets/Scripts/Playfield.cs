@@ -4,11 +4,102 @@ using UnityEngine;
 
 public class Playfield : MonoBehaviour
 {
+    public static Playfield instance;
+    public int gridSizeX, gridSizeY, gridSizeZ;
+
+    [Header("Blocks")]
+    public GameObject[] blockList;
+
+    [Header("Playfield Visuals")]
     public GameObject bottomPlane;
     public GameObject N, S, W, E;
 
-    public int gridSizeX, gridSizeY, gridSizeZ;
     public Transform[,,] theGrid;
+    int blockCount;
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
+    public Vector3 Round(Vector3 vec)
+    {
+        return new Vector3(Mathf.RoundToInt(vec.x), Mathf.RoundToInt(vec.y), Mathf.RoundToInt(vec.z));
+    }
+
+    public Vector3 VectorToInt(Vector3 vec)
+    {
+        return new Vector3((int)vec.x, (int)vec.y, (int)vec.z);
+    }
+
+    public bool CheckInsideGrid(Vector3 pos)
+    {
+        return ((int)pos.x >= 0 && (int)pos.x < gridSizeX
+                && (int)pos.z >= 0 && (int)pos.z < gridSizeZ
+                && (int)pos.y >= 0);
+    }
+
+    public void UpdateGrid(TetrisBlock block)
+    {
+        //DELETE POSSIBLE PARENT OBJECTS
+        for (int x = 0; x < gridSizeX; x++)
+        {
+            for (int z = 0; z < gridSizeZ; z++ )
+            {
+                for (int y = 0; y < gridSizeY; y++)
+                {
+                    if (theGrid[x, y, z ] != null)
+                    {
+                        if (theGrid[x, y, z].parent == block.transform)
+                        {
+                            theGrid[x, y, z] = null;
+                        }
+                    }
+                }
+            }
+        }
+
+        //FILL IN ALL CHILE OBJECTES
+        foreach(Transform child in block.transform)
+        {
+            Vector3 pos = Round(child.position);
+            if (pos.y < gridSizeY)
+            {
+                theGrid[(int)pos.x, (int)pos.y, (int)pos.z] = child;
+            }
+        }
+    }
+
+    public Transform GetTransformOnGridPos(Vector3 pos)
+    {
+        if (pos.y > gridSizeY - 1)
+        {
+            return null;
+        }else
+        {
+            return theGrid[(int)pos.x, (int)pos.y, (int)pos.z];
+        }
+        
+
+    }
+
+    public void SpawnNewBlock()
+    {
+        Vector3 spawnPoint = new Vector3((int)(transform.position.x + (float)gridSizeX / 2), 
+                                        (int)transform.position.y + gridSizeY, 
+                                        (int)(transform.position.z + (float)gridSizeZ / 2));
+        int randomIndex = Random.Range(0, blockList.Length);
+
+        //SPAWN THE BLOCK
+        GameObject newBlock = Instantiate(blockList[randomIndex], spawnPoint, Quaternion.identity) as GameObject;
+        blockCount++;
+
+    }
+
+    public int BlockCound()
+    {
+        return blockCount;
+    }
 
     private void OnDrawGizmos()
     {
@@ -81,12 +172,15 @@ public class Playfield : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        theGrid = new Transform[gridSizeX, gridSizeY, gridSizeZ];
+        SpawnNewBlock();
     }
+
+
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
