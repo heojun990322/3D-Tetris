@@ -11,6 +11,7 @@ public class TetrisBlock : MonoBehaviour
     void Start()
     {
         
+        ButtonInputs.instance.SetActiveBlock(gameObject, this);
     }
 
     // Update is called once per frame
@@ -35,6 +36,54 @@ public class TetrisBlock : MonoBehaviour
             }
             
             prevTime = Time.time;
+        }
+        
+
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            //SetInput(Vector3.left);
+        }
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            //SetInput(Vector3.right);
+        }
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            SetRotationInput(new Vector3(90, 0, 0));
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            //SetInput(Vector3.back);
+            SetRotationInput(new Vector3(-90, 0, 0));
+        }
+
+    }
+
+    public void SetInput(Vector3 direction)
+    {
+        transform.position += direction;
+        
+        if (!CheckValidMove())
+        {
+            transform.position -= direction;
+        }
+        else
+        {
+            Playfield.instance.UpdateGrid(this);
+        }
+    }
+
+    public void SetRotationInput(Vector3 rotation)
+    {
+        transform.Rotate(rotation, Space.World);
+
+        if (!CheckValidMove())
+        {
+            transform.Rotate(-rotation, Space.World);
+        }
+        else
+        {
+            Playfield.instance.UpdateGrid(this);
         }
     }
 
