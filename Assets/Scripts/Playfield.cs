@@ -9,13 +9,13 @@ public class Playfield : MonoBehaviour
 
     [Header("Blocks")]
     public GameObject[] blockList;
+    public GameObject[] ghostList;
 
     [Header("Playfield Visuals")]
     public GameObject bottomPlane;
     public GameObject N, S, W, E;
 
     public Transform[,,] theGrid;
-    int blockCount;
 
     private void Awake()
     {
@@ -90,16 +90,81 @@ public class Playfield : MonoBehaviour
                                         (int)(transform.position.z + (float)gridSizeZ / 2));
         int randomIndex = Random.Range(0, blockList.Length);
 
-        //SPAWN THE BLOCK
+        // SPAWN THE BLOCK
         GameObject newBlock = Instantiate(blockList[randomIndex], spawnPoint, Quaternion.identity) as GameObject;
-        blockCount++;
 
+        // GHOST
+        GameObject newGhost = Instantiate(ghostList[randomIndex], spawnPoint, Quaternion.identity) as GameObject;
+        if (newGhost != null)
+            newGhost.GetComponent<GhostBlock>().SetParent(newBlock);
     }
 
-    public int BlockCound()
+    public void DeleteLayer()
     {
-        return blockCount;
+        for (int y = gridSizeY - 1; y >= 0; y--)
+        {
+            if (CheckFullLayer(y)) // CHECK FULL LAYER
+            {
+                // DELETE LAYER
+                DeleteLayerAt(y);
+
+                // MOVE ALL DOWN BY 1
+                MoveAllLayerDown(y);
+            }
+        }
     }
+
+    void MoveAllLayerDown(int y)
+    {
+        for (int i = y; i < gridSizeY; i++)
+        {
+            MoveOneLayerDown(i);
+        }
+    }
+
+    void MoveOneLayerDown(int y)
+    {
+        for (int x = 0; x < gridSizeX; x++)
+        {
+            for (int z = 0; z < gridSizeZ; z++)
+            {
+                if (theGrid[x, y, z] != null)
+                {
+                    theGrid[x, y - 1, z] = theGrid[x, y, z];
+                    theGrid[x, y, z] = null;
+                    theGrid[x, y - 1, z].position += Vector3.down;
+                }
+            }
+        }
+    }
+
+    bool CheckFullLayer(int y)
+    {
+        for (int x = 0; x < gridSizeX; x++)
+        {
+            for (int z = 0; z < gridSizeZ; z++)
+            {
+                if (theGrid[x, y, z] == null)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    void DeleteLayerAt(int y)
+    {
+        for (int x = 0; x < gridSizeX; x++)
+        {
+            for (int z = 0; z < gridSizeZ; z++)
+            {
+                Destroy(theGrid[x, y, z].gameObject);
+                theGrid[x, y, z] = null;
+            }
+        }
+    } 
 
     private void OnDrawGizmos()
     {
@@ -175,8 +240,6 @@ public class Playfield : MonoBehaviour
         theGrid = new Transform[gridSizeX, gridSizeY, gridSizeZ];
         SpawnNewBlock();
     }
-
-
 
     // Update is called once per frame
     void Update()

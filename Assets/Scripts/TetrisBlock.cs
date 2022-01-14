@@ -25,6 +25,7 @@ public class TetrisBlock : MonoBehaviour
             {
                 transform.position += Vector3.up;
                 //DELETE LAYER IF POSSIBLE
+                Playfield.instance.DeleteLayer();
 
                 enabled = false;
                 //CREATE A NEW TETRIS BLOCK
@@ -105,5 +106,10 @@ public class TetrisBlock : MonoBehaviour
         }
         
         return true;
+    }
+
+    public void SetSpeed()
+    {
+        fallTime = 0.1f;
     }
 }

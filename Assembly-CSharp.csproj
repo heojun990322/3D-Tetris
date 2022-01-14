@@ -55,8 +55,9 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Playfield.cs" />
     <Compile Include="Assets\Scripts\CamCtrl.cs" />
-    <Compile Include="Assets\Scripts\TetrisBlock.cs" />
     <Compile Include="Assets\Scripts\ButtonInputs.cs" />
+    <Compile Include="Assets\Scripts\TetrisBlock.cs" />
+    <Compile Include="Assets\Scripts\GhostBlock.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

@@ -11,6 +11,8 @@ public class ButtonInputs : MonoBehaviour
 
     GameObject activeBlock;
     TetrisBlock activeTetris;
+
+    bool moveIsOn = true;
     
     private void Awake()
     {
@@ -20,7 +22,7 @@ public class ButtonInputs : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        SetInputs();
     }
 
     void RepositionToActiveBlock()
@@ -100,5 +102,24 @@ public class ButtonInputs : MonoBehaviour
                 activeTetris.SetRotationInput(new Vector3(0, 0, -90));
             }
         }
+    }
+
+    public void SwitchInputs()
+    {
+        moveIsOn = !moveIsOn;
+        SetInputs();
+    }
+
+    void SetInputs() {
+        moveCanvas.SetActive(moveIsOn);
+        foreach (GameObject c in rotateCanvases)
+        {
+            c.SetActive(!moveIsOn);
+        }
+    }
+
+    public void SetHighSpeed()
+    {
+        activeTetris.SetSpeed();
     }
 }
