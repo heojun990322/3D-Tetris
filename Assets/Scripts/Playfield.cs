@@ -15,6 +15,8 @@ public class Playfield : MonoBehaviour
     public GameObject bottomPlane;
     public GameObject N, S, W, E;
 
+    int randomIndex;
+
     public Transform[,,] theGrid;
 
     private void Awake()
@@ -88,7 +90,6 @@ public class Playfield : MonoBehaviour
         Vector3 spawnPoint = new Vector3((int)(transform.position.x + (float)gridSizeX / 2), 
                                         (int)transform.position.y + gridSizeY, 
                                         (int)(transform.position.z + (float)gridSizeZ / 2));
-        int randomIndex = Random.Range(0, blockList.Length);
 
         // SPAWN THE BLOCK
         GameObject newBlock = Instantiate(blockList[randomIndex], spawnPoint, Quaternion.identity) as GameObject;
@@ -97,20 +98,35 @@ public class Playfield : MonoBehaviour
         GameObject newGhost = Instantiate(ghostList[randomIndex], spawnPoint, Quaternion.identity) as GameObject;
         if (newGhost != null)
             newGhost.GetComponent<GhostBlock>().SetParent(newBlock);
+
+        // PREVIEW
+        CalculatePreview();
+        Previewer.instance.ShowPreview(randomIndex);
+    }
+
+    public void CalculatePreview()
+    {
+        randomIndex = Random.Range(0, blockList.Length);
     }
 
     public void DeleteLayer()
     {
+        int layersCleared = 0;
         for (int y = gridSizeY - 1; y >= 0; y--)
         {
             if (CheckFullLayer(y)) // CHECK FULL LAYER
             {
                 // DELETE LAYER
                 DeleteLayerAt(y);
+                layersCleared++;
 
                 // MOVE ALL DOWN BY 1
                 MoveAllLayerDown(y);
             }
+        }
+        if (layersCleared > 0)
+        {
+            GameManager.instance.LayerCleared(layersCleared);
         }
     }
 
@@ -238,6 +254,7 @@ public class Playfield : MonoBehaviour
     void Start()
     {
         theGrid = new Transform[gridSizeX, gridSizeY, gridSizeZ];
+        CalculatePreview();
         SpawnNewBlock();
     }
 

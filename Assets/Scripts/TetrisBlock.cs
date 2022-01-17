@@ -10,8 +10,13 @@ public class TetrisBlock : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
         ButtonInputs.instance.SetActiveBlock(gameObject, this);
+        fallTime = GameManager.instance.ReadFallSpeed();
+
+        if (!CheckValidMove())
+        {
+            GameManager.instance.SetGameIsOver();
+        }
     }
 
     // Update is called once per frame
@@ -29,7 +34,10 @@ public class TetrisBlock : MonoBehaviour
 
                 enabled = false;
                 //CREATE A NEW TETRIS BLOCK
-                Playfield.instance.SpawnNewBlock();
+                if (!GameManager.instance.ReadGameIsOver())
+                {
+                    Playfield.instance.SpawnNewBlock();
+                }
             } else
             {
                 //UPDATE THE GRID

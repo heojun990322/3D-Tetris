@@ -9,6 +9,15 @@ public class RotateMe : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.RotateAround(transform.position, Vector3.up, speed * Time.deltaTime);
+        Vector3 sumVector = new Vector3(0, 0, 0);
+
+        foreach (Transform child in transform)
+        {
+            sumVector += child.position;
+        }
+
+        Vector3 centerVector = sumVector / transform.childCount;
+
+        transform.RotateAround(centerVector, Vector3.up, speed * Time.deltaTime);
     }
 }
