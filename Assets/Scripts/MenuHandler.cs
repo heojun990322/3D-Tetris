@@ -11,6 +11,15 @@ public class MenuHandler : MonoBehaviour
         SceneManager.LoadScene(sceneToLoad);
     }
 
+    public void Exit()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
     // Start is called before the first frame update
     void Start()
     {

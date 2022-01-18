@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using UnityEngine.UI;
+
 public class ButtonInputs : MonoBehaviour
 {
     public static ButtonInputs instance;
@@ -11,6 +13,7 @@ public class ButtonInputs : MonoBehaviour
 
     GameObject activeBlock;
     TetrisBlock activeTetris;
+    Button clickButton;
 
     bool moveIsOn = true;
     
@@ -43,6 +46,17 @@ public class ButtonInputs : MonoBehaviour
     void Update()
     {
         RepositionToActiveBlock();
+
+        KeySwitchInputs();
+        if (moveIsOn)
+        {
+            KeyMoveBlock();
+        }
+        else
+        {
+            KeyRotateBlock();
+        }
+        KeySetHighSpeed();
     }
 
     public void MoveBlock(string direction)
@@ -121,5 +135,84 @@ public class ButtonInputs : MonoBehaviour
     public void SetHighSpeed()
     {
         activeTetris.SetSpeed();
+    }
+
+    void KeyMoveBlock()
+    {
+        if (Input.GetKeyDown(KeyCode.A)) // LEFT
+        {
+            clickButton = moveCanvas.transform.GetChild(1).gameObject.GetComponent<Button>();
+            clickButton.onClick.Invoke();
+        }
+        if (Input.GetKeyDown(KeyCode.D)) // RIGHT
+        {
+            clickButton = moveCanvas.transform.GetChild(0).gameObject.GetComponent<Button>();
+            clickButton.onClick.Invoke();
+        }
+        if (Input.GetKeyDown(KeyCode.W)) // FORWARD
+        {
+            clickButton = moveCanvas.transform.GetChild(2).gameObject.GetComponent<Button>();
+            clickButton.onClick.Invoke();
+        }
+        if (Input.GetKeyDown(KeyCode.S)) // BACK
+        {
+            clickButton = moveCanvas.transform.GetChild(3).gameObject.GetComponent<Button>();
+            clickButton.onClick.Invoke();
+        }
+    }
+
+    void KeyRotateBlock()
+    {
+        // Y AXIS
+        if (Input.GetKeyDown(KeyCode.S)) // posY
+        {
+            clickButton = rotateCanvases[1].transform.GetChild(1).gameObject.GetComponent<Button>();
+            clickButton.onClick.Invoke();
+        }
+        if (Input.GetKeyDown(KeyCode.D)) // negY
+        {
+            clickButton = rotateCanvases[1].transform.GetChild(0).gameObject.GetComponent<Button>();
+            clickButton.onClick.Invoke();
+        }
+
+        // X AXIS
+        if (Input.GetKeyDown(KeyCode.Q)) // posX
+        {
+            clickButton = rotateCanvases[0].transform.GetChild(0).gameObject.GetComponent<Button>();
+            clickButton.onClick.Invoke();
+        }
+        if (Input.GetKeyDown(KeyCode.A)) // negX
+        {
+            clickButton = rotateCanvases[0].transform.GetChild(1).gameObject.GetComponent<Button>();
+            clickButton.onClick.Invoke();
+        }
+
+        // Z AXIS
+        if (Input.GetKeyDown(KeyCode.W)) // posZ
+        {
+            clickButton = rotateCanvases[2].transform.GetChild(1).gameObject.GetComponent<Button>();
+            clickButton.onClick.Invoke();
+        }
+        if (Input.GetKeyDown(KeyCode.E)) // negZ
+        {
+            clickButton = rotateCanvases[2].transform.GetChild(0).gameObject.GetComponent<Button>();
+            clickButton.onClick.Invoke();
+        }
+    }
+
+    void KeySwitchInputs()
+    {
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            SwitchInputs();
+        }
+    }
+    
+    void KeySetHighSpeed()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            SetHighSpeed();
+        }
     }
 }

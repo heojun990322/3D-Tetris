@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour
 
     void CalculateLevel()
     {
-        if (score >= 0 && score <= 10000)
+        if (score >= 0 && score <= 1000)
         {
             fallSpeed = 3f;
             level = 1;
@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
         {
             for (int i = 1; i < 10; i++)
             {
-                if (score > i * 10000 && score <= i * 10000 + 10000)
+                if (score > i * 1000 && score <= i * 1000 + 1000)
                 {
                     level = i + 1;
                     fallSpeed -= 0.25f;
