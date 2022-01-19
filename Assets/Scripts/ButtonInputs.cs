@@ -30,9 +30,18 @@ public class ButtonInputs : MonoBehaviour
 
     void RepositionToActiveBlock()
     {
+        Vector3 sumVector = new Vector3(0, 0, 0);
+
         if (activeBlock != null)
         {
-            transform.position = activeBlock.transform.position;
+            foreach (Transform child in activeBlock.transform)
+            {
+                sumVector += child.position;
+            }
+
+            Vector3 centerVector = sumVector / activeBlock.transform.childCount;
+
+            transform.position = centerVector;
         }
     }
 
